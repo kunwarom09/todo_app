@@ -14,7 +14,8 @@ class CreateTodoValidator
             fields: [
                 'todo' =>  [
                     new Assert\Length(min: 4,
-                        //minMessage: "ke garerko,,,... yo !, you must write at least {{ limit }} characters"),
+                        //minMessage: "ke garerko,,,... yo !, you must write at least {{ limit }} characters"
+                        ),
                     new Assert\NotBlank(),
                 ], 'status' =>  [
                     //enum
