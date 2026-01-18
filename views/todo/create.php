@@ -3,8 +3,9 @@
     <form action="<?= urlGenerator()->generatePath('store_todo') ?>" method="POST">
         <input placeholder="Enter new todo" name="todo">
         <select name="status">
-            <?php foreach($status as $case): ?>
-                <option value="<?= $case->value ?>"><?= $case->name ?></option>
+            <option ></option>
+            <?php foreach(\App\Enum\TodoStatus::cases() as $case): ?>
+                <option value="<?= $case->name ?>"><?= $case->value ?></option>
             <?php endforeach; ?>
         </select>
         <input type="date">

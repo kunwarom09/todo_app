@@ -3,6 +3,7 @@
 namespace App;
 
 use Capsule\Core\Container;
+use Symfony\Component\HttpFoundation\Request;
 
 class Router
 {
@@ -38,6 +39,7 @@ class Router
     {
         $url = parse_url($reqUri, PHP_URL_PATH);
         $url = '/' . str_replace($this->container->get('baseUrl'), '', $url);
+
         foreach ($this->routes[$reqMethod] as $routes) {
             $pattern = preg_replace('#\{(\w+)\}#', '(?P<$1>[^/]+)', $routes['path']);
             if (!preg_match("#^$pattern$#", $url, $matches)) continue;
@@ -49,6 +51,12 @@ class Router
             foreach ($reflection->getParameters() as $param) {
                 $type = $param->getType();
                 $name = $param->getName();
+
+                if($type->getName() === 'Symfony\Component\HttpFoundation\Request'){
+                    $args['request'] = Request::createFromGlobals();
+                    continue;
+                }
+
                 if ($type && !$type->isBuiltin()) {
                     $args[] = $this->container->get($type->getName());
                     continue;
@@ -69,6 +77,7 @@ class Router
                 }
                 throw new \Exception("Cannot resolve parameter \$$name");
             }
+
             call_user_func_array([$controller, $methodName], $args);
             return;
         }
