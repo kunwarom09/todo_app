@@ -1,5 +1,6 @@
 <?php
 namespace App\Controller;
+use App\Adapter\TodoAdapter;
 use League\Plates\Engine;
 
 class PageController
@@ -9,8 +10,9 @@ class PageController
         protected Engine $templateEngine,
     ){
     }
-   public function index(): void
+   public function index(TodoAdapter $todoAdapter): void
    {
-     echo $this->render('home');
+       $todo = $todoAdapter->all();
+     echo $this->render('home',['data'=>$todo]);
    }
 }

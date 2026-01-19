@@ -22,5 +22,22 @@ return [
         '_controller' => [TodoController::class, 'store'],
         'name' => 'store_todo',
         'method' => 'POST',
+    ],
+    [
+        'path' => '/edit/{id}',
+        '_controller' => [TodoController::class, 'edit'],
+        'name' => 'edit_todo',
+    ],
+    [
+        'path' => '/update/{id}',
+        '_controller' => [TodoController::class, 'update'],
+        'name' => 'update_todo',
+        'method' => 'POST',
+    ],
+    [
+        'path' => '/delete/{id}',
+        '_controller' => [TodoController::class, 'delete'],
+        'name' => 'delete_todo',
+        'method' => 'POST',
     ]
 ];

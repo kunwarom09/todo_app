@@ -51,12 +51,10 @@ class Router
             foreach ($reflection->getParameters() as $param) {
                 $type = $param->getType();
                 $name = $param->getName();
-
                 if($type->getName() === 'Symfony\Component\HttpFoundation\Request'){
                     $args['request'] = Request::createFromGlobals();
                     continue;
                 }
-
                 if ($type && !$type->isBuiltin()) {
                     $args[] = $this->container->get($type->getName());
                     continue;

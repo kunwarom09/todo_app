@@ -16,14 +16,6 @@ trait BaseAdapter
         return $statement->execute();
     }
 
-    public function all(string $order = 'DESC', ?int $limit = null)
-    {
-        $select = $this->sql->select();
-        if($limit) $select->limit($limit);
-        $select->order($this->primaryKey . ' ' . $order);
-        return $this->executeSql($select);
-    }
-
     public function toArray(ResultInterface  $results): array
     {
         $items = [];
@@ -31,6 +23,14 @@ trait BaseAdapter
             $items[] = $result;
         }
         return $items;
+    }
+
+    public function all(string $order = 'DESC', ?int $limit = null)
+    {
+        $select = $this->sql->select();
+        if($limit) $select->limit($limit);
+        $select->order($this->primaryKey . ' ' . $order);
+        return $this->executeSql($select);
     }
 
     public function getLatest()

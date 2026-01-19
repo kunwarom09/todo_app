@@ -2,28 +2,51 @@
 
 namespace App\Controller;
 
+use App\Adapter\TodoAdapter;
+use App\UrlGenerator;
 use App\Validators\CreateTodoValidator;
 use Symfony\Component\HttpFoundation\Request;
-
-use App\DTO\CreateTodoDTO;
 use App\Enum\TodoStatus;
 use League\Plates\Engine;
-
-
+use Symfony\Component\HttpFoundation\RedirectResponse;
 class TodoController
 {
-
     use RenderTrait;
 
     public function __construct(
-        protected Engine $templateEngine,
+        protected Engine      $templateEngine,
+        protected TodoAdapter $todoAdapter,
+        protected string $baseUrl,
     )
     {
     }
 
-    public function view(): void
+    function getInputs($request): array
     {
-        echo $this->render('create',['status' => TodoStatus::cases()]);
+        return [
+            'title' => strip_tags($request->request->get('title')),
+            'status' => $request->request->get('status'),
+            'dueDate' => $request->request->get('dueDate'),
+        ];
+    }
+
+    function validateInputs(array $input): array
+    {
+        $violations = CreateTodoValidator::validate($input);
+        $errors = [];
+        if ($violations) {
+            foreach ($violations as $index => $violation) {
+                $key = trim($violation->getPropertyPath(), '[]');
+                $message = $violation->getMessage();
+                $errors[$key] = $message;
+            }
+        }
+        return $errors;
+    }
+
+    public function view(array $errors = [], array $userInputs = []): void
+    {
+        echo $this->render('create', ['status' => TodoStatus::cases(), 'errors' => $errors, 'userInputs' => $userInputs]);
     }
     public function store(Request $request): void
     {
@@ -32,66 +55,39 @@ class TodoController
                 'todo', 'status'
             ]);
         }, ARRAY_FILTER_USE_KEY);*/
-
-        $input = [
-            'todo' => $request->request->get('todo'),
-
-            //create enum from post data
-            'status' => $request->request->get('status'),
-        ];
-
-        $violations = CreateTodoValidator::validate($input);
-        if($violations){
-            foreach ($violations as $index => $violation) {
-                //$key = array_keys($violation->getRoot())[$index];
-                //var_dump($key);
-                var_dump($violation->getMessage());
-            }
+        $input = $this->getInputs($request);
+        $errors = $this->validateInputs($input);
+        if (empty($errors)) {
+            $result = $this->todoAdapter->store($input);
+            $response = new RedirectResponse($this->baseUrl . \urlGenerator()->generatePath('home'));
+            $response->send();
+        } else {
+            $this->view($errors, $input);
         }
-
-
-
-
-
-        /*
-        $todoViolations = $validator->validate(
-            $request->request->get('todo'),
-            [
-                new Assert\Length(min: 10),
-                new Assert\NotBlank(),
-            ]
-        );
-
-        foreach ($todoViolations as $violation) {
-            var_dump($violation);
-            var_dump($violation->getMessage());
-        }*/
-
-
-
-        die();
-
-
-        /*
-        $createTodoDTO = new CreateTodoDTO($_POST['todo'],$_POST['status']);
-        $validator = Validation::createValidatorBuilder()
-            ->addMethodMapping('loadValidatorMetadata')
-            ->getValidator();
-        $errors = $validator->validate($createTodoDTO);
-        var_dump((string)$errors);
-        if(count($errors)>0){
-            echo 'h';
-        }
-        */
     }
 
-    public function edit()
+    public function edit(int $id, array $errors = [], array $userInputs = [])
     {
-
+        $todo = $this->todoAdapter->getById($id);
+        echo $this->render('edit', ['data' => $todo, 'errors' => $errors, 'userInputs' => $userInputs]);
     }
 
-    public function delete()
+    public function update(int $id, Request $request)
     {
+        $input = $this->getInputs($request);
+        $errors = $this->validateInputs($input);
+        if (empty($errors)) {
+            $result = $this->todoAdapter->update($id, $input);
+            $response = new RedirectResponse($this->baseUrl . \urlGenerator()->generatePath('home'));
+            $response->send();
+        } else {
+            $this->edit($id, $errors, $input);
+        }
+    }
 
+    public function delete(int $id,PageController $pageController): void
+    {
+        $result = $this->todoAdapter->delete($id);
+        $pageController->index($this->todoAdapter);
     }
 }
