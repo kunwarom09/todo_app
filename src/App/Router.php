@@ -51,12 +51,15 @@ class Router
             foreach ($reflection->getParameters() as $param) {
                 $type = $param->getType();
                 $name = $param->getName();
+
+
+
                 if($type->getName() === 'Symfony\Component\HttpFoundation\Request'){
                     $args['request'] = Request::createFromGlobals();
                     continue;
                 }
                 if ($type && !$type->isBuiltin()) {
-                    $args[] = $this->container->get($type->getName());
+                    $args[$name] = $this->container->get($type->getName());
                     continue;
                 }
                 if (isset($routeParams[$name])) {
@@ -66,15 +69,16 @@ class Router
                             $value = (int)$value;
                         }
                     }
-                    $args[] = $value;
+                    $args[$name] = $value;
                     continue;
                 }
                 if ($param->isDefaultValueAvailable()) {
-                    $args[] = $param->getDefaultValue();
+                    $args[$name] = $param->getDefaultValue();
                     continue;
                 }
                 throw new \Exception("Cannot resolve parameter \$$name");
             }
+
 
             call_user_func_array([$controller, $methodName], $args);
             return;

@@ -1,6 +1,7 @@
 <?php $this->layout('layout/main'); ?>
 <?php
-$errors = '';
+
+
 function showError($errors, $field)
 {
     if (empty($errors[$field]))

@@ -5,10 +5,7 @@ use App\Controller\TodoController;
 
 return [
     [
-        '_controller' => [PageController::class, 'index'],
-    ],
-    [
-        'path' => 'home',
+        'path' => '',
         '_controller' => [PageController::class, 'index'],
         'name' => 'home',
     ],
@@ -30,7 +27,7 @@ return [
     ],
     [
         'path' => 'update/{id}',
-        '_controller' => [TodoController::class, 'update'],
+        '_controller' => [TodoController::class, 'edit'],
         'name' => 'update_todo',
         'method' => 'POST',
     ],

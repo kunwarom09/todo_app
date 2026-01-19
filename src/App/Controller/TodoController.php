@@ -47,7 +47,10 @@ class TodoController
 
     public function view(array $errors = [], array $userInputs = []): void
     {
-        echo $this->render('create', ['status' => TodoStatus::cases(), 'errors' => $errors, 'userInputs' => $userInputs]);
+        echo $this->render('create', [
+            'errors' => $errors,
+            'userInputs' => $userInputs
+        ]);
     }
     public function store(Request $request): void
     {
@@ -58,6 +61,8 @@ class TodoController
         }, ARRAY_FILTER_USE_KEY);*/
         $input = $this->getInputs($request);
         $errors = $this->validateInputs($input);
+
+
         if (empty($errors)) {
             $result = $this->todoAdapter->store($input);
             $response = new RedirectResponse(urlGeneratorAlias()->generatePath('home'));
@@ -67,13 +72,42 @@ class TodoController
         }
     }
 
-    public function edit(int $id, array $errors = [], array $userInputs = [])
+    public function edit(int $id,
+                         Request $request,
+                         array $errors = [],
+                         array $userInputs = [])
     {
         $todo = $this->todoAdapter->getById($id);
-        echo $this->render('edit', ['data' => $todo, 'errors' => $errors, 'userInputs' => $userInputs]);
+
+
+
+        $errors = [];
+        $userInputs = [];
+        if($request->getMethod() === 'POST'){
+            //process
+            $userInputs = $this->getInputs($request);
+            $errors = $this->validateInputs($userInputs);
+
+            $todo = array_merge($todo, $userInputs);
+
+            if (empty($errors)) {
+                $result = $this->todoAdapter->update($id, $userInputs);
+                $response = new RedirectResponse(urlGeneratorAlias()->generatePath('home'));
+                $response->send();
+                exit();
+            } else {
+                //$this->edit($id, $errors, $input);
+            }
+        }
+
+
+        echo $this->render('edit', [
+            'data' => $todo,
+            'errors' => $errors
+        ]);
     }
 
-    public function update(int $id, Request $request)
+  /*  public function update(int $id, Request $request)
     {
         $input = $this->getInputs($request);
         $errors = $this->validateInputs($input);
@@ -84,7 +118,7 @@ class TodoController
         } else {
             $this->edit($id, $errors, $input);
         }
-    }
+    }*/
 
     public function delete(int $id,PageController $pageController): void
     {
