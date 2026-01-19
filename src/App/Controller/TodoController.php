@@ -9,14 +9,15 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Enum\TodoStatus;
 use League\Plates\Engine;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use function urlGenerator as urlGeneratorAlias;
+
 class TodoController
 {
     use RenderTrait;
 
     public function __construct(
         protected Engine      $templateEngine,
-        protected TodoAdapter $todoAdapter,
-        protected string $baseUrl,
+        protected TodoAdapter $todoAdapter
     )
     {
     }
@@ -59,7 +60,7 @@ class TodoController
         $errors = $this->validateInputs($input);
         if (empty($errors)) {
             $result = $this->todoAdapter->store($input);
-            $response = new RedirectResponse($this->baseUrl . \urlGenerator()->generatePath('home'));
+            $response = new RedirectResponse(urlGeneratorAlias()->generatePath('home'));
             $response->send();
         } else {
             $this->view($errors, $input);
@@ -78,7 +79,7 @@ class TodoController
         $errors = $this->validateInputs($input);
         if (empty($errors)) {
             $result = $this->todoAdapter->update($id, $input);
-            $response = new RedirectResponse($this->baseUrl . \urlGenerator()->generatePath('home'));
+            $response = new RedirectResponse(urlGeneratorAlias()->generatePath('home'));
             $response->send();
         } else {
             $this->edit($id, $errors, $input);

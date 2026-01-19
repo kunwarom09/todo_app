@@ -5,7 +5,8 @@ namespace App;
 class UrlGenerator
 {
     public function __construct(
-        protected array $routes
+        protected array $routes,
+        protected string $baseUrl = '',
     )
     {
     }
@@ -24,13 +25,14 @@ class UrlGenerator
             $path = str_replace('{' . $paramName . '}', $params[$paramName], $path);
             unset($params[$paramName]);
         }
-        $url = trim($path,'/');
+        $url = $path;
+        //$url = trim($path,'/');
         $queryStrings = [];
         foreach ($params as $key => $value) {
             $queryStrings[] = "{$key}={$value}";
         }
 
         if($queryStrings) $url .= '?' . implode('&', $queryStrings);
-        return $url;
+        return $this->baseUrl.''.$url;
     }
 }

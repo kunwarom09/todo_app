@@ -31,7 +31,10 @@ class ConfigureContainer
             return new DbAdapter($this->container->get('dbConfig'));
         });
         $this->container->singleton(UrlGenerator::class , function () {
-            return new UrlGenerator($this->router->getRoutes());
+            return new UrlGenerator(
+                $this->router->getRoutes(),
+                $this->container->get('baseUrl'),
+            );
         });
     }
 }

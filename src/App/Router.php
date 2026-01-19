@@ -38,7 +38,7 @@ class Router
     public function dispatch(string $reqUri, string $reqMethod = 'GET'): void
     {
         $url = parse_url($reqUri, PHP_URL_PATH);
-        $url = '/' . str_replace($this->container->get('baseUrl'), '', $url);
+        $url = str_replace($this->container->get('baseUrl'), '', $url);
 
         foreach ($this->routes[$reqMethod] as $routes) {
             $pattern = preg_replace('#\{(\w+)\}#', '(?P<$1>[^/]+)', $routes['path']);
