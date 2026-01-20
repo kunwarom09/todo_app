@@ -1,3 +1,9 @@
+<?php
+
+/** @var \App\DTO\TodoDTO[] $todos */
+
+?>
+
 <?php $this->layout('layout/main'); ?>
 
 <div class="homeContainer">
@@ -14,7 +20,6 @@
         <tbody>
         <?php $sn = 1; ?>
         <?php
-        /** @var \App\DTO\TodoDTO $todo */
         foreach ($todos as $todo): ?>
             <tr>
                 <td><?= $todo->id ?></td>
