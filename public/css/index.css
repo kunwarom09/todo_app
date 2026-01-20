@@ -168,6 +168,10 @@ button {
 .deleteBtn{
     background: #d9534f;
 }
+
+.cloneBtn{
+    background: black;
+}
 .modal {
     position: fixed;
     inset: 0;
@@ -214,5 +218,10 @@ button {
 .btn-secondary {
     margin-left: 10px;
     padding: 8px 14px;
+}
+
+.status-inline svg {
+    vertical-align: middle;
+    margin-right: 4px;
 }
 

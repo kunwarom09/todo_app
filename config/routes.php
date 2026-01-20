@@ -11,14 +11,14 @@ return [
     ],
     [
         'path' => 'create',
-        '_controller' => [TodoController::class, 'view'],
+        '_controller' => [TodoController::class, 'store'],
         'name' => 'view',
     ],
     [
         'path' => 'store',
         '_controller' => [TodoController::class, 'store'],
         'name' => 'store_todo',
-        'method' => 'POST',
+        'method' => 'GET,POST',
     ],
     [
         'path' => 'edit/{id}',
@@ -29,12 +29,17 @@ return [
         'path' => 'update/{id}',
         '_controller' => [TodoController::class, 'edit'],
         'name' => 'update_todo',
-        'method' => 'POST',
+        'method' => 'GET,POST',
     ],
     [
         'path' => 'delete/{id}',
         '_controller' => [TodoController::class, 'delete'],
         'name' => 'delete_todo',
         'method' => 'POST',
+    ],
+    [
+        'path' => 'clone/{id}',
+        '_controller' => [TodoController::class, 'clone'],
+        'name' => 'clone_todo',
     ]
 ];

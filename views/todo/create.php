@@ -1,4 +1,4 @@
-<?php $this->layout('layout/main');?>
+<?php $this->layout('layout/main'); ?>
 <?php
 function showError($errors, $field)
 {
@@ -6,14 +6,15 @@ function showError($errors, $field)
         return '';
     echo '<div class="errorMessage">' . htmlspecialchars($errors[$field]) . '</div>';
 }
+
 ?>
 <div class="createTodoForm">
     <div class="form_container">
         <form action="<?= urlGenerator()->generatePath('store_todo') ?>" method="POST">
-           <h2>Enter new todo</h2>
+            <h2>Enter new todo</h2>
             <Label>Title:
                 <input placeholder="Enter new todo"
-                       value="<?=$userInputs['title'] ?? ''?>"
+                       value="<?= $userInputs['title'] ?? '' ?>"
                        name="title"
                        style="<?= isset($errors['title']) ? 'border:1px solid red;' : '' ?>">
                 <?php showError($errors, 'title') ?>
@@ -21,16 +22,16 @@ function showError($errors, $field)
             <Label>Status:
                 <select name="status" style="<?= isset($errors['status']) ? 'border:1px solid red;' : '' ?>">
                     <option>Choose a status</option>
-                    <?php foreach(\App\Enum\TodoStatus::cases() as $case): ?>
+                    <?php foreach (\App\Enum\TodoStatus::cases() as $case): ?>
                         <option
-
-                                value="<?= $case->value ?>"><?= $case->value ?></option>
+                                value="<?= $case->value ?>"><?= ucfirst(str_replace('_', ' ', $case->value)) ?></option>
                     <?php endforeach; ?>
                 </select>
                 <?php showError($errors, 'status') ?>
             </Label>
             <Label>Due Date:
-                <input type="date" name="dueDate" style="<?= isset($errors['dueDate']) ? 'border:1px solid red;' : '' ?>">
+                <input type="date" name="dueDate"
+                       style="<?= isset($errors['dueDate']) ? 'border:1px solid red;' : '' ?>">
                 <?php showError($errors, 'dueDate') ?>
             </Label>
             <button type="submit">Add</button>

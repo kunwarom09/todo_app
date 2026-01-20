@@ -17,10 +17,16 @@ class Router
     }
     public function add($method, $path, $handler, $name): void
     {
-        $this->routes[$method][$name] = [
-            "handler" => $handler,
-            "path" => $path,
-        ];
+        $methods = is_array($method)
+            ? $method
+            : array_map('trim', explode(',', $method));
+        foreach ($methods as $method) {
+            $method = strtoupper($method);
+            $this->routes[$method][$name] = [
+                "handler" => $handler,
+                "path" => $path,
+            ];
+        }
     }
 
     public function getRoutes(): array
@@ -51,9 +57,6 @@ class Router
             foreach ($reflection->getParameters() as $param) {
                 $type = $param->getType();
                 $name = $param->getName();
-
-
-
                 if($type->getName() === 'Symfony\Component\HttpFoundation\Request'){
                     $args['request'] = Request::createFromGlobals();
                     continue;

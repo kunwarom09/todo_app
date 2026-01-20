@@ -7,6 +7,7 @@
             <th>SN</th>
             <th>Title</th>
             <th>Status</th>
+            <th>Due Date</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -16,12 +17,23 @@
             <tr>
                 <td><?= $sn++ ?></td>
                 <td><?= $this->e($todo['title']) ?></td>
-                <td><?= $this->e($todo['status']) ?></td>
+                <td>
+                    <span class="status-inline">
+                        <?= \App\Enum\TodoStatus::iconByStatus($todo['status']) ?>
+                        <?= ucfirst(str_replace('_', ' ', $this->e($todo['status']))) ?>
+                    </span>
+                </td>
+                <td><?= $this->e($todo['due_date']) ?></td>
                 <td>
                     <div class="actionButtons">
                         <a href="<?= urlGenerator()->generatePath('edit_todo', ['id' => $todo['id']]) ?>">
-                            <button class="editBtn">Edit</button></a>
-                        <button class="deleteBtn" onclick="showDeleteModal(<?= $todo['id'] ?>,'<?= $this->e($todo['title']) ?>')">
+                            <button class="editBtn">Edit</button>
+                        </a>
+                        <a href="<?= urlGenerator()->generatePath('clone_todo', ['id' => $todo['id']]) ?>">
+                            <button class="cloneBtn">Clone</button>
+                        </a>
+                        <button class="deleteBtn"
+                                onclick="showDeleteModal(<?= $todo['id'] ?>,'<?= $this->e($todo['title']) ?>')">
                             Delete
                         </button>
                     </div>
@@ -34,7 +46,6 @@
         <div class="modalContent">
             <h3>Delete Todo</h3>
             <p id="deleteMessage"></p>
-
             <form method="post" id="deleteForm">
                 <button type="submit" class="btn-danger">
                     Yes, Delete
@@ -55,7 +66,7 @@
         console.log('hero');
         message.textContent = `Are you sure you want to delete "${title}"?`;
         let url = "<?= urlGenerator()->generatePath('delete_todo', ['id' => '__ID__']) ?>"
-        url = url.replace('__ID__',id)
+        url = url.replace('__ID__', id)
         form.action = url;
         modal.classList.add('show');
     }
