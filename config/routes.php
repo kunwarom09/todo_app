@@ -6,7 +6,7 @@ use App\Controller\TodoController;
 return [
     [
         'path' => '',
-        '_controller' => [PageController::class, 'index'],
+        '_controller' => [TodoController::class, 'index'],
         'name' => 'home',
     ],
     [

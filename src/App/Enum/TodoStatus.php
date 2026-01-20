@@ -4,11 +4,11 @@ namespace App\Enum;
 enum TodoStatus: string
 {
     case Pending = 'pending';
+    case Todo = 'todo';
     case InProgress = 'in_progress';
     case Completed = 'completed';
-    case Todo = 'todo';
 
-    public function icon(): string
+    public  function getIcon(): string
     {
         return match ($this) {
             self::Pending => '<svg width="16" height="16" fill="orange" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -28,8 +28,15 @@ enum TodoStatus: string
                               <circle cx="12" cy="12" r="10" stroke="gray" stroke-width="2" fill="none"/></svg>',
         };
     }
-    public static function iconByStatus(string $status): string
+
+    public function getLabel(): string
     {
-        return self::from($status)->icon();
+        return match ($this) {
+            self::Pending => 'Backlog',
+            self::Todo => 'Tasks to do',
+            self::InProgress => 'Tasks in progress',
+            self::Completed => 'Task completed',
+            //default => $this->value
+        };
     }
 }

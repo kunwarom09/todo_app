@@ -13,27 +13,40 @@
         </thead>
         <tbody>
         <?php $sn = 1; ?>
-        <?php foreach ($data as $todo): ?>
+        <?php
+        /** @var \App\DTO\TodoDTO $todo */
+        foreach ($todos as $todo): ?>
             <tr>
-                <td><?= $sn++ ?></td>
-                <td><?= $this->e($todo['title']) ?></td>
+                <td><?= $todo->id ?></td>
+                <td>
+                    <?= $this->e($todo->title) ?>
+                    <div style="font-size: 80%;">
+                    <?=$todo->getUserDisplayName()?>
+                    </div>
+                </td>
                 <td>
                     <span class="status-inline">
-                        <?= \App\Enum\TodoStatus::iconByStatus($todo['status']) ?>
-                        <?= ucfirst(str_replace('_', ' ', $this->e($todo['status']))) ?>
+                        <?=$todo->status->getIcon()?>
+                        <?=$todo->status->getLabel()?>
                     </span>
                 </td>
-                <td><?= $this->e($todo['due_date']) ?></td>
+                <td><?= $todo->getFormattedDueDate() ?></td>
                 <td>
                     <div class="actionButtons">
-                        <a href="<?= urlGenerator()->generatePath('edit_todo', ['id' => $todo['id']]) ?>">
+                        <a href="<?= urlGenerator()->generatePath(
+                            'edit_todo', [
+                            'id' => $todo->id
+                        ]) ?>">
                             <button class="editBtn">Edit</button>
                         </a>
-                        <a href="<?= urlGenerator()->generatePath('clone_todo', ['id' => $todo['id']]) ?>">
+                        <a href="<?= urlGenerator()->generatePath(
+                            'clone_todo',
+                            ['id' => $todo->id]
+                        ) ?>">
                             <button class="cloneBtn">Clone</button>
                         </a>
                         <button class="deleteBtn"
-                                onclick="showDeleteModal(<?= $todo['id'] ?>,'<?= $this->e($todo['title']) ?>')">
+                                onclick="showDeleteModal(<?= $todo->id?>,'<?= $this->e($todo->title) ?>')">
                             Delete
                         </button>
                     </div>

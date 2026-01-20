@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Adapter\TodoAdapter;
+use App\Hydrator\TodoHydrator;
 use App\UrlGenerator;
 use App\Validators\CreateTodoValidator;
 use JetBrains\PhpStorm\NoReturn;
@@ -23,10 +24,20 @@ class TodoController
     {
     }
 
+    public function index(TodoAdapter $todoAdapter): void
+    {
+        $data = $todoAdapter->allWithUser();
+        $list = $todoAdapter->hydrateAll($data);
+
+        echo $this->render('index',[
+            'todos' => $list
+        ]);
+    }
+
     function getInputs($request): array
     {
         return [
-            'title' => strip_tags($request->request->get('title')),
+            'title' => strip_tags($request->request->get('title') ?? ''),
             'status' => $request->request->get('status'),
             'dueDate' => $request->request->get('dueDate'),
         ];
@@ -74,7 +85,11 @@ class TodoController
                          Request $request,
     ): void
     {
-        $todo = $this->todoAdapter->getById($id);
+        $data = $this->todoAdapter->getByIdWithUser($id);
+        $todo = TodoHydrator::make($data);
+
+        $oldData = [];
+
         $errors = [];
         if ($request->getMethod() === 'POST') {
             $toUpdateTodo = $this->todoAdapter->getById($id);
@@ -83,7 +98,9 @@ class TodoController
             }
             $userInputs = $this->getInputs($request);
             $errors = $this->validateInputs($userInputs);
-            $todo = array_merge($todo, $userInputs);
+            $oldData = array_merge($todo->__toArray(), $userInputs);
+
+
             if (empty($errors)) {
                 $result = $this->todoAdapter->update($id, $userInputs);
                 $response = new RedirectResponse(urlGeneratorAlias()->generatePath('home'));
@@ -92,7 +109,8 @@ class TodoController
             }
         }
         echo $this->render('edit', [
-            'data' => $todo,
+            'todo' => $todo,
+            'old' => $oldData,
             'errors' => $errors
         ]);
     }

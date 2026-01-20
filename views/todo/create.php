@@ -24,7 +24,7 @@ function showError($errors, $field)
                     <option>Choose a status</option>
                     <?php foreach (\App\Enum\TodoStatus::cases() as $case): ?>
                         <option
-                                value="<?= $case->value ?>"><?= ucfirst(str_replace('_', ' ', $case->value)) ?></option>
+                                value="<?= $case->value ?>"><?= $case->getLabel() ?></option>
                     <?php endforeach; ?>
                 </select>
                 <?php showError($errors, 'status') ?>
